@@ -192,11 +192,11 @@ msgstr "Essa importação irá importar os seguintes campos: "
 
 #: src/unfold/contrib/import_export/templates/admin/import_export/import_preview.html:22
 msgid "New"
-msgstr "Novo"
+msgstr "Nova"
 
 #: src/unfold/contrib/import_export/templates/admin/import_export/import_preview.html:24
 msgid "Skipped"
-msgstr "Ignorado"
+msgstr "Ignorada"
 
 #: src/unfold/contrib/import_export/templates/admin/import_export/import_preview.html:26
 #: src/unfold/templates/admin/submit_line.html:53
@@ -209,7 +209,7 @@ msgstr "Atualizar"
 
 #: src/unfold/contrib/import_export/templates/admin/import_export/import_validation.html:7
 msgid "Some rows failed to validate"
-msgstr "Alguns registros falharam ao validar"
+msgstr "Algumas linhas falharam ao validar"
 
 #: src/unfold/contrib/import_export/templates/admin/import_export/import_validation.html:13
 msgid ""
@@ -222,7 +222,7 @@ msgstr ""
 #: src/unfold/contrib/import_export/templates/admin/import_export/import_validation.html:22
 #: src/unfold/contrib/import_export/templates/admin/import_export/import_validation.html:40
 msgid "Row"
-msgstr "Registro"
+msgstr "Linha"
 
 #: src/unfold/contrib/import_export/templates/admin/import_export/import_validation.html:26
 #: src/unfold/contrib/import_export/templates/admin/import_export/import_validation.html:44
@@ -260,29 +260,31 @@ msgstr "Selecionar todos(as) os(as) %(total_count)s %(module_name)s"
 
 #: src/unfold/templates/admin/actions.html:48
 msgid "Clear selection"
-msgstr ""
+msgstr "Limpar seleção"
 
 #: src/unfold/templates/admin/app_list.html:11
 #: src/unfold/templates/unfold/helpers/app_list_default.html:8
 #, python-format
 msgid "Models in the %(name)s application"
-msgstr ""
+msgstr "Models da aplicação %(name)s"
 
 #: src/unfold/templates/admin/app_list.html:57
 #: src/unfold/templates/unfold/helpers/app_list.html:81
 #: src/unfold/templates/unfold/helpers/app_list_default.html:60
 msgid "You don’t have permission to view or edit anything."
-msgstr ""
+msgstr "Você não tem permissão para ver ou editar nada."
 
 #: src/unfold/templates/admin/auth/user/add_form.html:7
 msgid ""
 "First, enter a username and password. Then, you’ll be able to edit more user "
 "options."
 msgstr ""
+"Primeiro, informe um login e senha. Então, você será capaz de editar mais "
+"opções do usuário."
 
 #: src/unfold/templates/admin/auth/user/add_form.html:9
 msgid "Enter a username and password."
-msgstr ""
+msgstr "Informe um login e senha."
 
 #: src/unfold/templates/admin/auth/user/change_password.html:25
 #: src/unfold/templates/admin/auth/user/change_password.html:55
@@ -291,66 +293,66 @@ msgstr ""
 #: src/unfold/templates/registration/password_change_form.html:46
 #: src/unfold/templates/unfold/helpers/account_links.html:27
 msgid "Change password"
-msgstr ""
+msgstr "Trocar senha"
 
 #: src/unfold/templates/admin/auth/user/change_password.html:44
 #, python-format
 msgid "Enter a new password for the user <strong>%(username)s</strong>."
-msgstr ""
+msgstr "Informe uma nova senha para o usuário <strong>%(username)s</strong>."
 
 #: src/unfold/templates/admin/base_site.html:3
 #: src/unfold/templates/admin/index.html:7
 msgid "Django site admin"
-msgstr ""
+msgstr "Administração do site Django"
 
 #: src/unfold/templates/admin/base_site.html:6
 #: src/unfold/templates/admin/index.html:12
 msgid "Django administration"
-msgstr ""
+msgstr "Administração do Django"
 
 #: src/unfold/templates/admin/change_form.html:35
 #: src/unfold/templates/admin/change_list_object_tools.html:10
 #, python-format
 msgid "Add %(name)s"
-msgstr ""
+msgstr "Adicionar %(name)s"
 
 #: src/unfold/templates/admin/change_form_object_tools.html:7
 #: src/unfold/templates/admin/object_history.html:21
 msgid "History"
-msgstr ""
+msgstr "Histórico"
 
 #: src/unfold/templates/admin/change_form_object_tools.html:12
 msgid "View on site"
-msgstr ""
+msgstr "Ver no site"
 
 #: src/unfold/templates/admin/change_list.html:99
 msgid "Filters"
-msgstr ""
+msgstr "Filtros"
 
 #: src/unfold/templates/admin/change_list.html:126
 msgid "Filter results"
-msgstr ""
+msgstr "Filtrar registros"
 
 #: src/unfold/templates/admin/change_list.html:130
 msgid "Clear all filters"
-msgstr ""
+msgstr "Limpar todos os filtros"
 
 #: src/unfold/templates/admin/change_list.html:158
 msgid "Apply Filters"
-msgstr ""
+msgstr "Aplicar Filtros"
 
 #: src/unfold/templates/admin/change_list_results.html:29
 msgid "Toggle sorting"
-msgstr ""
+msgstr "Inverter ordenação"
 
 #: src/unfold/templates/admin/change_list_results.html:37
 msgid "Remove from sorting"
-msgstr ""
+msgstr "Remover da ordenação"
 
 #: src/unfold/templates/admin/change_list_results.html:43
 #, python-format
 msgid "Sorting priority: %(priority_number)s"
-msgstr ""
+msgstr "Prioridade de ordenação: %(priority_number)s"
 
 #: src/unfold/templates/admin/delete_confirmation.html:37
 #, python-format
