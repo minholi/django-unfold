@@ -2,8 +2,14 @@
 
 <div class="flex items-center ml-auto">
     <div class="flex flex-row group items-center leading-none relative">
-        <div class="flex gap-4">
-            {% include "unfold/helpers/theme_switch.html" %}
+        <div class="flex gap-4 items-center">
+            {% if environment %}
+                {% include "unfold/helpers/label.html" with text=environment.0 type=environment.1 %}
+            {% endif %}
+
+            {% if not theme %}
+                {% include "unfold/helpers/theme_switch.html" %}
+            {% endif %}
 
             {% include "unfold/helpers/account_links.html" %}
         </div>

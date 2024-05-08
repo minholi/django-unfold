@@ -53,13 +53,19 @@
     {% endif %}
 {% endspaceless %}{% endblock %}
 
+{% block nav-global-side %}
+    {% if has_add_permission %}
+        {% include "unfold/helpers/add_link.html" %}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <div id="content-main">
         <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}{% if form_url %}action="{{ form_url }}" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
             {% csrf_token %}
 
             {% if actions_detail %}
-                <div class="bg-gray-50 flex justify-end mb-4 p-3 rounded-md dark:bg-gray-800">
+                <div class="bg-gray-50 flex justify-end -mt-6 mb-4 p-3 rounded-md dark:bg-gray-800">
                     {% for action in actions_detail %}
                         <a href="{{ action.path }}" class="bg-white text-gray-500 border cursor-pointer flex font-medium items-center px-3 py-2 mr-3 rounded-md shadow-sm text-sm dark:bg-gray-900 dark:border dark:border-gray-700 dark:text-gray-400"
                             {% for attr_name, attr_value in action.attrs.items %}
@@ -89,8 +95,12 @@
 
                 {% block field_sets %}
                     {% for fieldset in adminform %}
-                        {% include 'admin/includes/fieldset.html' %}
+                        {% if "tab" not in fieldset.classes %}
+                            {% include 'admin/includes/fieldset.html' %}
+                        {% endif %}
                     {% endfor %}
+
+                    {% include "unfold/helpers/fieldsets_tabs.html" %}
                 {% endblock %}
 
                 {% block after_field_sets %}{% endblock %}

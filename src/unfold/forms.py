@@ -13,6 +13,7 @@ from django.contrib.auth.forms import (
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.http import HttpRequest
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .widgets import BASE_INPUT_CLASSES, INPUT_CLASSES, SELECT_CLASSES
@@ -21,7 +22,12 @@ from .widgets import BASE_INPUT_CLASSES, INPUT_CLASSES, SELECT_CLASSES
 class ActionForm(forms.Form):
     action = forms.ChoiceField(
         label="",
-        widget=forms.Select({"class": " ".join([*SELECT_CLASSES, "w-72"])}),
+        widget=forms.Select(
+            {
+                "class": " ".join([*SELECT_CLASSES, "max-w-full", "lg:!w-64"]),
+                "x-model": "action",
+            }
+        ),
     )
 
     select_across = forms.BooleanField(
@@ -75,7 +81,7 @@ class UserChangeForm(BaseUserChangeForm):
 
         password = self.fields.get("password")
         if password:
-            password.help_text = password.help_text.format("../password/")
+            password.help_text = mark_safe(password.help_text.format("../password/"))
 
 
 class AdminPasswordChangeForm(BaseAdminPasswordChangeForm):
