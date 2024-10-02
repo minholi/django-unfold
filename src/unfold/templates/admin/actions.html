@@ -28,7 +28,7 @@
         {% block actions-counter %}
             {% if actions_selection_counter %}
                 <div class="bg-gray-100 flex flex-row gap-2 h-9.5 items-center px-3 rounded-md shadow-sm truncate dark:bg-white/[.04] lg:bg-transparent dark:lg:!bg-transparent lg:px-0 lg:shadow-none">
-                    <span class="action-counter text-sm text-gray-500 dark:text-gray-400" data-actions-icnt="{{ cl.result_list|length }}">
+                    <span class="action-counter text-sm" data-actions-icnt="{{ cl.result_list|length }}">
                         {{ selection_note }}
                     </span>
 
@@ -37,17 +37,19 @@
                             {{ selection_note_all }}
                         </span>
 
-                        <span class="question hidden text-primary-600 text-sm underline">
-                            <a href="#" title="{% translate "Click here to select the objects across all pages" %}">
-                                {% blocktranslate with cl.result_count as total_count %}Select all {{ total_count }} {{ module_name }}{% endblocktranslate %}
-                            </a>
-                        </span>
+                        {% if not cl.model_admin.list_disable_select_all %}
+                            <span class="question hidden text-primary-600 text-sm dark:text-primary-500">
+                                <a href="#" title="{% translate "Click here to select the objects across all pages" %}">
+                                    {% blocktranslate with cl.result_count as total_count %}Select all {{ total_count }} {{ module_name }}{% endblocktranslate %}
+                                </a>
+                            </span>
 
-                        <span class="clear hidden text-sm text-red-600 underline">
-                            <a href="#">
-                                {% translate "Clear selection" %}
-                            </a>
-                        </span>
+                            <span class="clear hidden text-sm text-red-600">
+                                <a href="#">
+                                    {% translate "Clear selection" %}
+                                </a>
+                            </span>
+                        {% endif %}
                     {% endif %}
                 </div>
             {% endif %}

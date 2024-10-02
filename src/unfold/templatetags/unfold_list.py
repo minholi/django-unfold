@@ -36,11 +36,7 @@ from ..widgets import UnfoldBooleanWidget
 
 register = Library()
 
-LINK_CLASSES = [
-    "text-gray-600",
-    "truncate",
-    "dark:text-gray-300",
-]
+LINK_CLASSES = []
 
 ROW_CLASSES = [
     "align-middle",
@@ -54,17 +50,13 @@ ROW_CLASSES = [
     "px-3",
     "py-2",
     "text-left",
-    "text-gray-500",
-    "text-sm",
     "before:flex",
     "before:capitalize",
     "before:content-[attr(data-label)]",
     "before:items-center",
+    "before:font-semibold",
     "before:mr-auto",
-    "before:text-gray-500",
     "first:border-t-0",
-    "dark:before:text-gray-400",
-    "dark:text-gray-400",
     "lg:before:hidden",
     "lg:first:border-t",
     "lg:py-3",
@@ -80,17 +72,15 @@ CHECKBOX_CLASSES = [
     "px-3",
     "py-2",
     "text-left",
-    "text-sm",
     "before:block",
     "before:capitalize",
     "before:content-[attr(data-label)]",
+    "before:font-semibold",
     "before:mr-auto",
-    "before:text-gray-500",
     "lg:before:hidden",
     "lg:border-t",
     "lg:border-gray-200",
     "lg:table-cell",
-    "dark:before:text-gray-400",
     "dark:lg:border-gray-800",
 ]
 
@@ -254,7 +244,7 @@ def items_for_result(cl: ChangeList, result: HttpRequest, form) -> SafeText:
                     f, (models.DateField, models.TimeField, models.ForeignKey)
                 ):
                     row_classes.append("nowrap")
-        row_class = mark_safe(f' class="{" ".join(row_classes)}"')
+
         # If list_display_links not defined, add the link tag to the first field
 
         if link_in_col(first, field_name, cl):
@@ -287,7 +277,7 @@ def items_for_result(cl: ChangeList, result: HttpRequest, form) -> SafeText:
                     else "",
                     result_repr,
                 )
-
+            row_class = mark_safe(f' class="{" ".join(row_classes)}"')
             yield format_html(
                 '<{}{} data-label="{}">{}</{}>',
                 table_tag,
@@ -309,7 +299,17 @@ def items_for_result(cl: ChangeList, result: HttpRequest, form) -> SafeText:
                 )
             ):
                 bf = form[field_name]
-                result_repr = mark_safe(str(bf.errors) + str(bf))
+                result_repr = mark_safe(
+                    str(bf)
+                    + render_to_string(
+                        "unfold/helpers/form_errors.html", {"errors": bf.errors}
+                    )
+                )
+
+                if bf.errors:
+                    row_classes += ["group", "errors"]
+
+            row_class = mark_safe(f' class="{" ".join(row_classes)}"')
 
             if field_index != 0:
                 yield format_html(

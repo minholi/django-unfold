@@ -6,7 +6,68 @@ window.addEventListener("load", (e) => {
   dateTimeShortcutsOverlay();
 
   renderCharts();
+
+  filterForm();
+
+  warnWithoutSaving();
 });
+
+/*************************************************************
+ * Warn without saving
+ *************************************************************/
+const warnWithoutSaving = () => {
+  let formChanged = false;
+  const form = document.querySelector("form.warn-unsaved-form");
+
+  const checkFormChanged = () => {
+    const elements = document.querySelectorAll(
+      "form.warn-unsaved-form input, form.warn-unsaved-form select, form.warn-unsaved-form textarea"
+    );
+
+    Array.from(elements).forEach((field) => {
+      field.addEventListener("input", (e) => (formChanged = true));
+    });
+  };
+
+  if (!form) {
+    return;
+  }
+
+  new MutationObserver((mutationsList, observer) => {
+    checkFormChanged();
+  }).observe(form, { attributes: true, childList: true, subtree: true });
+
+  checkFormChanged();
+
+  preventLeaving = (e) => {
+    if (formChanged) {
+      e.preventDefault();
+    }
+  };
+
+  form.addEventListener("submit", (e) => {
+    window.removeEventListener("beforeunload", preventLeaving);
+  });
+
+  window.addEventListener("beforeunload", preventLeaving);
+};
+
+/*************************************************************
+ * Filter form
+ *************************************************************/
+const filterForm = () => {
+  const filterForm = document.getElementById("filter-form");
+
+  if (!filterForm) {
+    return;
+  }
+
+  filterForm.addEventListener("formdata", (event) => {
+    Array.from(event.formData.entries()).forEach(([key, value]) => {
+      if (value === "") event.formData.delete(key);
+    });
+  });
+};
 
 /*************************************************************
  * Class watcher
@@ -63,7 +124,9 @@ const fileInputUpdatePath = () => {
     input.addEventListener("change", (e) => {
       const parts = e.target.value.split("\\");
       const placeholder =
-        input.parentNode.parentNode.querySelector("input[type=text]");
+        input.parentNode.parentNode.parentNode.querySelector(
+          "input[type=text]"
+        );
       placeholder.setAttribute("value", parts[parts.length - 1]);
     });
   });
@@ -76,12 +139,35 @@ const submitSearch = () => {
   const searchbar = document.getElementById("searchbar");
   const searchbarSubmit = document.getElementById("searchbar-submit");
 
+  const getQueryParams = (searchString) => {
+    const queryParams = window.location.search
+      .replace("?", "")
+      .split("&")
+      .map((param) => param.split("="))
+      .reduce((values, [key, value]) => {
+        if (key && key !== "q") {
+          values[key] = value;
+        }
+
+        return values;
+      }, {});
+
+    if (searchString) {
+      queryParams["q"] = searchString;
+    }
+
+    const result = Object.entries(queryParams)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&");
+
+    return `?${result}`;
+  };
+
   if (searchbar !== null) {
     searchbar.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
-        window.location = `?q=${e.target.value}`;
+        window.location = getQueryParams(e.target.value);
         e.preventDefault();
-      } else {
       }
     });
   }
@@ -89,7 +175,7 @@ const submitSearch = () => {
   if (searchbarSubmit !== null && searchbar !== null) {
     searchbarSubmit.addEventListener("click", (e) => {
       e.preventDefault();
-      window.location = `?q=${searchbar.value}`;
+      window.location = getQueryParams(searchbar.value);
     });
   }
 };

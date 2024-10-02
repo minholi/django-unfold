@@ -7,9 +7,20 @@ from django.core.validators import EMPTY_VALUES
 from django.http import HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import URLPattern, path, reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.functional import lazy
 from django.utils.module_loading import import_string
+from django.views.decorators.cache import never_cache
 
+try:
+    from django.contrib.auth.decorators import login_not_required
+except ImportError:
+
+    def login_not_required(func: Callable) -> Callable:
+        return func
+
+
+from .dataclasses import Favicon
 from .settings import get_config
 from .utils import hex_to_rgb
 from .widgets import CHECKBOX_CLASSES, INPUT_CLASSES
@@ -65,6 +76,9 @@ class UnfoldAdminSite(AdminSite):
                 ),
                 "site_symbol": self._get_value(
                     get_config(self.settings_name)["SITE_SYMBOL"], request
+                ),
+                "site_favicons": self._process_favicons(
+                    request, get_config(self.settings_name)["SITE_FAVICONS"]
                 ),
                 "show_history": get_config(self.settings_name)["SHOW_HISTORY"],
                 "show_view_on_site": get_config(self.settings_name)[
@@ -174,6 +188,8 @@ class UnfoldAdminSite(AdminSite):
             },
         )
 
+    @method_decorator(never_cache)
+    @login_not_required
     def login(
         self, request: HttpRequest, extra_context: Optional[Dict[str, Any]] = None
     ) -> HttpResponse:
@@ -205,7 +221,7 @@ class UnfoldAdminSite(AdminSite):
 
         from .forms import AdminOwnPasswordChangeForm
 
-        url = reverse("admin:password_change_done", current_app=self.name)
+        url = reverse(f"{self.name}:password_change_done", current_app=self.name)
         defaults = {
             "form_class": AdminOwnPasswordChangeForm,
             "success_url": url,
@@ -220,23 +236,14 @@ class UnfoldAdminSite(AdminSite):
         navigation = get_config(self.settings_name)["SIDEBAR"].get("navigation", [])
         results = []
 
-        def _get_is_active(link: str) -> bool:
-            if not isinstance(link, str):
-                link = str(link)
-
-            if link in request.path and link != reverse_lazy("admin:index"):
-                return True
-            elif link == request.path == reverse_lazy("admin:index"):
-                return True
-
-            return False
-
         for group in navigation:
             allowed_items = []
 
             for item in group["items"]:
                 item["active"] = False
-                item["active"] = _get_is_active(item["link"])
+                item["active"] = self._get_is_active(
+                    request, item.get("link_callback") or item["link"]
+                )
 
                 for tab in get_config(self.settings_name)["TABS"]:
                     has_primary_link = False
@@ -247,7 +254,9 @@ class UnfoldAdminSite(AdminSite):
                             has_primary_link = True
                             continue
 
-                        if _get_is_active(tab_item["link"]):
+                        if self._get_is_active(
+                            request, tab_item.get("link_callback") or tab_item["link"]
+                        ):
                             has_tab_link_active = True
                             break
 
@@ -255,7 +264,7 @@ class UnfoldAdminSite(AdminSite):
                         item["active"] = True
 
                 if isinstance(item["link"], Callable):
-                    item["link"] = item["link"](request)
+                    item["link_callback"] = lazy(item["link"])(request)
 
                 # Permission callback
                 item["has_permission"] = self._call_permission_callback(
@@ -290,8 +299,11 @@ class UnfoldAdminSite(AdminSite):
                 )
 
                 if isinstance(item["link"], Callable):
-                    item["link"] = item["link"](request)
+                    item["link_callback"] = lazy(item["link"])(request)
 
+                item["active"] = self._get_is_active(
+                    request, item.get("link_callback") or item["link"]
+                )
                 allowed_items.append(item)
 
             tab["items"] = allowed_items
@@ -354,6 +366,19 @@ class UnfoldAdminSite(AdminSite):
 
         return target
 
+    def _process_favicons(
+        self, request: HttpRequest, favicons: List[Dict]
+    ) -> List[Favicon]:
+        return [
+            Favicon(
+                href=self._get_value(item["href"], request),
+                rel=item.get("rel"),
+                sizes=item.get("sizes"),
+                type=item.get("type"),
+            )
+            for item in favicons
+        ]
+
     def _process_colors(
         self, colors: Dict[str, Dict[str, str]]
     ) -> Dict[str, Dict[str, str]]:
@@ -365,3 +390,14 @@ class UnfoldAdminSite(AdminSite):
                 colors[name][weight] = " ".join(str(item) for item in hex_to_rgb(value))
 
         return colors
+
+    def _get_is_active(self, request: HttpRequest, link: str) -> bool:
+        if not isinstance(link, str):
+            link = str(link)
+
+        if link in request.path and link != reverse_lazy(f"{self.name}:index"):
+            return True
+        elif link == request.path == reverse_lazy(f"{self.name}:index"):
+            return True
+
+        return False
